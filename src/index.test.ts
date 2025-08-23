@@ -17,6 +17,7 @@ describe('scrape', () => {
     });
     const r = await scrape('https://example.com');
     expect(r.meta).toBeDefined();
+    expect(r.meta.og?.title).toBe('Example OG');
     expect(r.diagnostics.timingsMs.fetch).toBeGreaterThanOrEqual(0);
   });
 
