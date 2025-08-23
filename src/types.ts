@@ -48,6 +48,18 @@ export interface ScrapeResult {
   };
 }
 
-export interface ScrapeError {
-  error: { code: string; message: string };
+export type ScrapeErrorCode = 'NETWORK_ERROR' | 'HTTP_ERROR' | 'PARSE_ERROR';
+
+export class ScrapeError extends Error {
+  code: ScrapeErrorCode;
+  constructor(code: ScrapeErrorCode, message: string) {
+    super(message);
+    this.code = code;
+    this.name = 'ScrapeError';
+  }
+
+  toJSON() {
+    return { error: { code: this.code, message: this.message } };
+  }
 }
+

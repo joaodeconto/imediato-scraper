@@ -2,6 +2,7 @@ import { load as loadHtml } from 'cheerio';
 import { fetch } from 'undici';
 import { extractBasic, extractFallbackImages, extractOg, extractTwitter } from './extract';
 import type { ScrapeOptions, ScrapeResult } from '../types';
+import { ScrapeError } from '../types';
 
 export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<ScrapeResult> {
   const start = Date.now();
@@ -10,15 +11,28 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
   const timer = setTimeout(() => controller.abort(), timeout);
 
   const ua = opts.userAgent ?? 'imediatoeratorBot/0.1 (+https://example.com)';
-  const res = await fetch(url, { signal: controller.signal, headers: { 'user-agent': ua, 'accept': 'text/html,*/*' } }).finally(() => clearTimeout(timer));
+
+  let res;
+  try {
+    res = await fetch(url, { signal: controller.signal, headers: { 'user-agent': ua, accept: 'text/html,*/*' } });
+  } catch (err) {
+    throw new ScrapeError('NETWORK_ERROR', (err as Error).message);
+  } finally {
+    clearTimeout(timer);
+  }
   const fetchMs = Date.now() - start;
 
   if (!res.ok) {
-    throw new Error(`HTTP_${res.status}`);
+    throw new ScrapeError('HTTP_ERROR', `HTTP_${res.status}`);
   }
 
-  const html = await res.text();
-  const $ = loadHtml(html);
+  let $;
+  try {
+    const html = await res.text();
+    $ = loadHtml(html);
+  } catch (err) {
+    throw new ScrapeError('PARSE_ERROR', (err as Error).message);
+  }
 
   const og = extractOg($);
   const twitter = extractTwitter($);
