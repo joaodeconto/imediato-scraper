@@ -29,7 +29,7 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
     images: useFallbackImgs ? extractFallbackImages($, url) : undefined
   };
 
-  const srcMap: Record<string, 'og' | 'twitter' | 'basic' | 'fallback' | 'none'> = {
+  const srcMap: Record<'title' | 'description' | 'image', 'og' | 'twitter' | 'basic' | 'fallback' | 'none'> = {
     title: og.title ? 'og' : twitter.title ? 'twitter' : basic.title ? 'basic' : 'none',
     description: og.description ? 'og' : twitter.description ? 'twitter' : basic.description ? 'basic' : 'none',
     image: (og.image?.length ? 'og' : twitter.image ? 'twitter' : (fallback.images?.length ? 'fallback' : 'none')),
