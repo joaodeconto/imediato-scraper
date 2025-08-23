@@ -17,7 +17,7 @@ importers:
     devDependencies:
       '@eslint/js':
         specifier: ^9.34.0
-        version: 9.34.0,
+        version: 9.34.0
       '@types/node':
         specifier: ^22.17.2
         version: 22.17.2
