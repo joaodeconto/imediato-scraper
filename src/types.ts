@@ -42,7 +42,7 @@ export interface ScrapeResult {
     fallback: FallbackMeta;
   };
   diagnostics: {
-    source: Record<string, 'og' | 'twitter' | 'basic' | 'fallback' | 'none'>;
+    source: Record<'title' | 'description' | 'image', 'og' | 'twitter' | 'basic' | 'fallback' | 'none'>;
     timingsMs: { fetch: number; parse: number };
     warnings: string[];
   };
