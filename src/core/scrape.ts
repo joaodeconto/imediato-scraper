@@ -9,8 +9,11 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
 
-  const ua = opts.userAgent ?? 'odecontoeratorBot/0.1 (+https://example.com)';
-  const res = await fetch(url, { signal: controller.signal, headers: { 'user-agent': ua, 'accept': 'text/html,*/*' } }).finally(() => clearTimeout(timer));
+  const ua = opts.userAgent ?? 'imediatoeratorBot/0.1 (+https://example.com)';
+  const headers: Record<string, string> = { 'user-agent': ua, 'accept': 'text/html,*/*' };
+  if (opts.locale) headers['accept-language'] = opts.locale;
+  const res = await fetch(url, { signal: controller.signal, headers }).finally(() => clearTimeout(timer));
+
   const fetchMs = Date.now() - start;
 
   if (!res.ok) {
@@ -24,7 +27,8 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
   const twitter = extractTwitter($);
   const basic = extractBasic($);
 
-  const useFallbackImgs = !(og.image?.length) && !(twitter.image);
+  const depth = opts.depth ?? 'fast';
+  const useFallbackImgs = depth !== 'fast' && !(og.image?.length) && !(twitter.image);
   const fallback = {
     images: useFallbackImgs ? extractFallbackImages($, url) : undefined
   };
