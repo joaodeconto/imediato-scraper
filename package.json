@@ -1,6 +1,6 @@
 {
-  "name": "@imediato/scraper",
-  "version": "0.1.1",
+  "name": "@odeconto/scraper",
+  "version": "0.1.2",
   "description": "Scraper de Open Graph / Twitter Cards com normalização",
   "license": "MIT",
   "type": "module",
@@ -30,13 +30,12 @@
   },
   "dependencies": {
     "cheerio": "1.1.2",
-    "undici": "^6.0.0"
+    "undici": "^6.21.3"
   },
   "devDependencies": {
-    "@types/cheerio": "1.0.0",
-    "@types/node": "^22.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.5.0",
-    "vitest": "^2.0.0"
+    "@types/node": "^22.17.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "vitest": "^2.1.9"
   }
 }

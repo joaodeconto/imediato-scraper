@@ -1,16 +1,16 @@
-# @imediato/scraper
+# @odeconto/scraper
 
 Scraper de Open Graph / Twitter Cards com normalização.
 
 ## Instalação
 ```bash
-pnpm add @imediato/scraper
-# ou npm i @imediato/scraper
+pnpm add @odeconto/scraper
+# ou npm i @odeconto/scraper
 ```
 
 ## Uso
 ```ts
-import { scrape, pickBestImage } from '@imediato/scraper';
+import { scrape, pickBestImage } from '@odeconto/scraper';
 
 const res = await scrape('https://example.com', { depth: 'deep' });
 console.log(res.meta.og.title, pickBestImage(res.meta));
