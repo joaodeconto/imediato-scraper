@@ -22,7 +22,7 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
 
   const og = extractOg($);
   const twitter = extractTwitter($);
-  const basic = extractBasic($);
+  const basic = extractBasic($, url);
 
   const useFallbackImgs = !(og.image?.length) && !(twitter.image);
   const fallback = {

@@ -25,11 +25,22 @@ export function extractTwitter($: cheerio.CheerioAPI) {
   };
 }
 
-export function extractBasic($: cheerio.CheerioAPI) {
+export function extractBasic($: cheerio.CheerioAPI, baseUrl: string) {
   const title = $('title').first().text() || undefined;
   const description = $(`meta[name="description"]`).attr('content') || undefined;
-  const favicon = $(`link[rel="icon"]`).attr('href') || $(`link[rel="shortcut icon"]`).attr('href') || undefined;
-  const canonical = $(`link[rel="canonical"]`).attr('href') || undefined;
+  let favicon =
+    $(`link[rel="icon"]`).attr('href') ||
+    $(`link[rel="shortcut icon"]`).attr('href') ||
+    undefined;
+  let canonical = $(`link[rel="canonical"]`).attr('href') || undefined;
+
+  try {
+    if (favicon) favicon = new URL(favicon, baseUrl).toString();
+  } catch {}
+  try {
+    if (canonical) canonical = new URL(canonical, baseUrl).toString();
+  } catch {}
+
   return { title, description, favicon, canonical };
 }
 
