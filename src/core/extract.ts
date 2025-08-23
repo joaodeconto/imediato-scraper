@@ -41,7 +41,9 @@ export function extractFallbackImages($: cheerio.CheerioAPI, baseUrl: string) {
     try {
       const full = new URL(src, baseUrl).toString();
       imgs.add(full);
-    } catch {}
+    } catch {
+      // ignore invalid URLs
+    }
   });
   return Array.from(imgs).slice(0, 8);
 }
