@@ -15,7 +15,7 @@ describe('scrape', () => {
       status: 200,
       text: async () => '<html><head><title>Example</title></head></html>'
     });
-    const r = await scrape('https://example.com');
+    const r = await scrape('https://uol.com.br');
     expect(r.meta).toBeDefined();
     expect(r.meta.og?.title).toBe('Example OG');
     expect(r.diagnostics.timingsMs.fetch).toBeGreaterThanOrEqual(0);
