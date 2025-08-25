@@ -35,6 +35,7 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
   }
 
   const og = extractOg($);
+
   const twitter = extractTwitter($);
   const basic = extractBasic($);
 
