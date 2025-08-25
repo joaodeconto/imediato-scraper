@@ -27,7 +27,6 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org/"
-          cache: "npm"     # cache do npm
 
       # Instalação determinística; se não tiver package-lock.json, troque por `npm i`
       - name: Install
