@@ -1,6 +1,6 @@
 {
   "name": "@odeconto/scraper",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Scraper de Open Graph / Twitter Cards com normalização",
   "license": "MIT",
   "type": "module",
@@ -13,6 +13,9 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
+  },
+  "publishConfig": {
+     "access": "public" 
   },
   "files": [
     "dist"
