@@ -1,5 +1,6 @@
 import { load as loadHtml } from 'cheerio';
 import { fetch } from 'undici';
+import type { Response } from 'undici';
 import { extractBasic, extractFallbackImages, extractOg, extractTwitter } from './extract';
 import type { ScrapeOptions, ScrapeResult } from '../types';
 import { ScrapeError } from '../types';
@@ -10,8 +11,8 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
 
-  const ua = opts.userAgent ?? 'imediatoeratorBot/0.1 (+https://example.com)';
-  let res;
+  const ua = opts.userAgent ?? 'odeconto-scraper/0.1 (+https://uol.com.br)';
+  let res: Response;
   try {
     res = await fetch(url, { signal: controller.signal, headers: { 'user-agent': ua, accept: 'text/html,*/*' } });
   } catch (err) {
