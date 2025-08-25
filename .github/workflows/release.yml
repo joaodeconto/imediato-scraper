@@ -3,7 +3,7 @@ name: Release (npm Trusted Publisher)
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v*.*.*"            # dispara ao fazer push de uma tag vX.Y.Z
   workflow_dispatch:
     inputs:
       mode:
@@ -15,7 +15,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+  id-token: write          # OIDC para Trusted Publishing
 
 jobs:
   publish:
@@ -27,10 +27,19 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org/"
-          always-auth: true
-           
-      - run: npm install --frozen-lockfile
-      - run: npm run build
+          cache: "npm"     # cache do npm
+
+      # Instalação determinística; se não tiver package-lock.json, troque por `npm i`
+      - name: Install
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm i
+          fi
+
+      - name: Build
+        run: npm run build
 
       - name: Verify tag matches package.json version
         if: ${{ github.event_name == 'push' }}
@@ -39,11 +48,12 @@ jobs:
           TAG="${GITHUB_REF#refs/tags/}"
           [ "v$PKG_VERSION" = "$TAG" ] || (echo "Tag ($TAG) != v$PKG_VERSION" && exit 1)
 
-      - name: Publish
+      # Publicação com OIDC (Trusted Publishing)
+      - name: Publish (provenance)
         if: ${{ github.event_name == 'push' || inputs.mode == 'publish' }}
-        run: npm publish
+        run: npm publish --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ""
+          NODE_AUTH_TOKEN: ""   # vazio mesmo; OIDC cuida da auth
 
       - name: Dry run
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
