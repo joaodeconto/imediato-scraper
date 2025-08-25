@@ -1,6 +1,5 @@
 import { load as loadHtml } from 'cheerio';
 import { fetch } from 'undici';
-import type { Response } from 'undici';
 import { extractBasic, extractFallbackImages, extractOg, extractTwitter } from './extract';
 import type { ScrapeOptions, ScrapeResult } from '../types';
 import { ScrapeError } from '../types';
@@ -35,7 +34,6 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
   }
 
   const og = extractOg($);
-
   const twitter = extractTwitter($);
   const basic = extractBasic($);
 
