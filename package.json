@@ -14,9 +14,6 @@
       "require": "./dist/index.cjs"
     }
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "files": [
     "dist"
   ],
@@ -28,7 +25,10 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "eslint .",
-    "prepublishOnly": "npm build"
+    "prepublishOnly": "npm run build"
+  },  
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "cheerio": "1.1.2",
