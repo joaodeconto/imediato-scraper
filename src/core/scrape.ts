@@ -11,8 +11,8 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
 
-  const ua = opts.userAgent ?? 'odeconto-scraper/0.1 (+https://uol.com.br)';
-  let res: Response;
+  const ua = opts.userAgent ?? 'imediatoeratorBot/0.1 (+https://example.com)';
+  let res;
   try {
     res = await fetch(url, { signal: controller.signal, headers: { 'user-agent': ua, accept: 'text/html,*/*' } });
   } catch (err) {
@@ -41,7 +41,7 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
   const depth = opts.depth ?? 'fast';
   const useFallbackImgs = depth !== 'fast' && !(og.image?.length) && !(twitter.image);
   const fallback = {
-    images: useFallbackImgs ? extractFallbackImages($, url) : undefined
+    images: useFallbackImgs ? extractFallbackImages($, res.url) : undefined
   };
 
   const srcMap: Record<'title' | 'description' | 'image', 'og' | 'twitter' | 'basic' | 'fallback' | 'none'> = {

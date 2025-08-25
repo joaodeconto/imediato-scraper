@@ -5,7 +5,12 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   dts: true,
   clean: true,
-  treeshake: true,
-  sourcemap: true,
-  minify: false,
+  sourcemap: false,
+  target: 'node18',
+  outDir: 'dist',
+  outExtension({ format }) {
+    return {
+      js: format === 'esm' ? '.mjs' : '.cjs',
+    };
+  },
 });
