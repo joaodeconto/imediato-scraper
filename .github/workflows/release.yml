@@ -36,7 +36,8 @@ jobs:
           else
             npm i
           fi
-
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
       - name: Build
         run: npm run build
 
@@ -50,7 +51,7 @@ jobs:
       # Publicação com OIDC (Trusted Publishing)
       - name: Publish (provenance)
         if: ${{ github.event_name == 'push' || inputs.mode == 'publish' }}
-        run: npm publish --provenance --access public
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ""   # vazio mesmo; OIDC cuida da auth
 
