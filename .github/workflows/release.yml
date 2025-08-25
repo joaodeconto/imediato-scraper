@@ -3,49 +3,53 @@ name: Release (npm Trusted Publisher)
 on:
   push:
     tags:
-      - "v*.*.*"          # publish when you push a semver tag like v0.1.4
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "publish or dry-run"
+        required: true
+        default: "dry-run"
+        type: choice
+        options: ["publish","dry-run"]
 
 permissions:
   contents: read
-  id-token: write         # REQUIRED for npm OIDC provenance
+  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js (npm provenance ready)
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "20.x"                   # npm 10+ (provenance supported)
+          node-version: "20.x"
           registry-url: "https://registry.npmjs.org/"
           cache: "pnpm"
           always-auth: true
 
-      - name: Set up PNPM
-        uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v3
         with:
           version: 9
 
-      - name: Install
-        run: pnpm install --frozen-lockfile
-
-      - name: Build
-        run: pnpm run build
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
 
       - name: Verify tag matches package.json version
+        if: ${{ github.event_name == 'push' }}
         run: |
           PKG_VERSION=$(node -p "require('./package.json').version")
           TAG="${GITHUB_REF#refs/tags/}"
-          if [ "v$PKG_VERSION" != "$TAG" ]; then
-            echo "Tag ($TAG) does not match package.json version (v$PKG_VERSION)."; exit 1;
-          fi
+          [ "v$PKG_VERSION" = "$TAG" ] || (echo "Tag ($TAG) != v$PKG_VERSION" && exit 1)
 
-      # Use npm CLI for provenance flag even if you use pnpm for everything else
-      - name: Publish to npm with provenance
+      - name: Publish
+        if: ${{ github.event_name == 'push' || inputs.mode == 'publish' }}
         run: npm publish --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ""   # not used with Trusted Publishing; keep empty
+          NODE_AUTH_TOKEN: ""
+
+      - name: Dry run
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
+        run: npm publish --dry-run
