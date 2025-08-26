@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { scrape } from './index';
+import { scrape } from '../src';
 
 // Test that fallback images are resolved against the final URL after redirects
 // to ensure relative image paths are correct even when the initial URL redirects.
