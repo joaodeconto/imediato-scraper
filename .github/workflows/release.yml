@@ -52,6 +52,7 @@ jobs:
       # Publicação com OIDC (Trusted Publishing)
       - name: Publish (provenance)
         if: ${{ github.event_name == 'push' || inputs.mode == 'publish' }}
+        run: npm publish
        
       - name: Dry run
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
