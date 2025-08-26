@@ -4,7 +4,7 @@ import { pickIcons, normalizeImageUrl } from './iconPicker';
 export * from './types';
 export { scrape } from './core/scrape';
 export { scoreIcon } from './score-icon';
-export { pickIcons, normalizeImageUrl };
+export { pickIcons, normalizeImageUrl } from './iconPicker';
 
 export async function iconPicker(url: string) {
   const [first] = await pickIcons(url);
