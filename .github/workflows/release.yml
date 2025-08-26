@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org/"
-          # always-auth: true
+          always-auth: true
           # cache: "npm"     # cache do npm --- IGNORE ---
           
 
@@ -52,7 +52,6 @@ jobs:
       # Publicação com OIDC (Trusted Publishing)
       - name: Publish (provenance)
         if: ${{ github.event_name == 'push' || inputs.mode == 'publish' }}
-        run: npm publish --access public --provenance
        
       - name: Dry run
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
