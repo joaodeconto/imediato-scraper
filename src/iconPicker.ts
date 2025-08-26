@@ -10,6 +10,17 @@ export interface IconCandidate {
   score?: number;
 }
 
+interface ManifestIcon {
+  src?: string;
+  sizes?: string;
+  type?: string;
+  purpose?: string;
+}
+
+interface WebManifest {
+  icons?: ManifestIcon[];
+}
+
 export function normalizeImageUrl(
   src: string,
   baseUrl: string,
