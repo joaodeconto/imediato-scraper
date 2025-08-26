@@ -13,7 +13,12 @@ export async function scrape(url: string, opts: ScrapeOptions = {}): Promise<Scr
   const ua = opts.userAgent ?? 'imediatoeratorBot/0.1 (+https://example.com)';
   let res;
   try {
-    res = await fetch(url, { signal: controller.signal, headers: { 'user-agent': ua, accept: 'text/html,*/*' } });
+    const headers: Record<string, string> = {
+      'user-agent': ua,
+      accept: 'text/html,*/*',
+    };
+    if (opts.locale) headers['accept-language'] = opts.locale;
+    res = await fetch(url, { signal: controller.signal, headers });
   } catch (err) {
     throw new ScrapeError('NETWORK_ERROR', (err as Error).message);
   } finally {

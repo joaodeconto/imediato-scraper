@@ -1,5 +1,6 @@
 import { load as loadHtml } from 'cheerio';
 import { fetch } from 'undici';
+import { scoreIcon } from './score-icon';
 
 export interface IconCandidate {
   url: string;
@@ -20,7 +21,17 @@ interface WebManifest {
   icons?: ManifestIcon[];
 }
 
-export function normalizeImageUrl(src: string, baseUrl: string): string | undefined {
+export function normalizeImageUrl(
+  src: string,
+  baseUrl: string,
+): string | undefined {
+  if (src.startsWith('wix:image://')) {
+    const match = /^wix:image:\/\/v1\/([^/]+)\/([^#?]+).*/.exec(src);
+    if (match) {
+      return `https://static.wixstatic.com/media/${match[1]}/${match[2]}`;
+    }
+    return undefined;
+  }
   try {
     const url = new URL(src, baseUrl);
     if (url.protocol === 'http:' || url.protocol === 'https:') {
@@ -30,24 +41,6 @@ export function normalizeImageUrl(src: string, baseUrl: string): string | undefi
     // ignore invalid URLs
   }
   return undefined;
-}
-
-export function scoreIcon(icon: IconCandidate): number {
-  let score = 0;
-  if (icon.sizes) {
-    const sizes = icon.sizes
-      .split(/\s+/)
-      .map(s => {
-        const [w, h] = s.split('x').map(n => parseInt(n, 10));
-        return Math.max(w || 0, h || 0);
-      })
-      .filter(n => !isNaN(n));
-    const maxSize = sizes.length ? Math.max(...sizes) : 0;
-    score += maxSize;
-  }
-  if (icon.purpose?.includes('maskable')) score += 1000;
-  if (icon.type === 'image/svg+xml') score += 500;
-  return score;
 }
 
 export async function pickIcons(url: string): Promise<IconCandidate[]> {
@@ -78,8 +71,19 @@ export async function pickIcons(url: string): Promise<IconCandidate[]> {
     const manifestUrl = normalizeImageUrl(manifestHref, baseUrl);
     if (manifestUrl) {
       try {
-        const manRes = await fetch(manifestUrl, { headers: { accept: 'application/manifest+json,application/json' } });
+        const manRes = await fetch(manifestUrl, {
+          headers: { accept: 'application/manifest+json,application/json' },
+        });
         if (manRes.ok) {
+          interface ManifestIcon {
+            src: string;
+            sizes?: string;
+            type?: string;
+            purpose?: string;
+          }
+          interface WebManifest {
+            icons?: ManifestIcon[];
+          }
           const manifest = (await manRes.json()) as WebManifest;
           if (Array.isArray(manifest.icons)) {
             for (const icon of manifest.icons) {
@@ -96,6 +100,29 @@ export async function pickIcons(url: string): Promise<IconCandidate[]> {
       }
     }
   }
+
+  $('script[type="application/ld+json"]').each((_, el) => {
+    try {
+      const data = JSON.parse($(el).contents().text() || '');
+      const logos: string[] = [];
+      const walk = (obj: any) => {
+        if (!obj) return;
+        if (Array.isArray(obj)) return obj.forEach(walk);
+        if (typeof obj === 'object') {
+          if (obj['@type'] === 'Organization' && typeof obj.logo === 'string') {
+            logos.push(obj.logo);
+          }
+          for (const value of Object.values(obj)) {
+            if (typeof value === 'object') walk(value);
+          }
+        }
+      };
+      walk(data);
+      if (logos.length) add({ url: logos[0] }, baseUrl);
+    } catch {
+      // ignore JSON-LD parse errors
+    }
+  });
 
   return candidates.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 }
