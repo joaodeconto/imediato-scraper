@@ -1,6 +1,8 @@
 {
   "name": "@odeconto/scraper",
   "version": "0.1.17",
+  "repository": "https://github.com/joaodeconto/odeconto-scraper",
+  "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" },
   "description": "Scraper de Open Graph / Twitter Cards com normalização",
   "license": "MIT",
   "type": "module",
@@ -26,9 +28,6 @@
     "dev": "tsup --watch",
     "lint": "eslint .",
     "prepublishOnly": "npm run build"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "dependencies": {
     "cheerio": "1.1.2",
