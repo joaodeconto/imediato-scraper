@@ -48,8 +48,10 @@ export async function pickIcons(url: string): Promise<IconCandidate[]> {
 
   const candidates: IconCandidate[] = [];
 
-  const add = (c: IconCandidate) => {
-    c.url = normalizeImageUrl(c.url, baseUrl) || c.url;
+  const add = (c: IconCandidate, base = baseUrl) => {
+    const normalized = normalizeImageUrl(c.url, base);
+    if (!normalized) return;
+    c.url = normalized;
     c.score = scoreIcon(c);
     candidates.push(c);
   };
@@ -57,9 +59,7 @@ export async function pickIcons(url: string): Promise<IconCandidate[]> {
   $('link[rel~="icon"]').each((_, el) => {
     const href = $(el).attr('href');
     if (!href) return;
-    const normalized = normalizeImageUrl(href, baseUrl);
-    if (!normalized) return;
-    add({ url: normalized, sizes: $(el).attr('sizes'), type: $(el).attr('type') || undefined });
+    add({ url: href, sizes: $(el).attr('sizes'), type: $(el).attr('type') || undefined });
   });
 
   const manifestHref = $('link[rel="manifest"]').attr('href');
@@ -73,9 +73,10 @@ export async function pickIcons(url: string): Promise<IconCandidate[]> {
           if (Array.isArray(manifest.icons)) {
             for (const icon of manifest.icons) {
               if (!icon.src) continue;
-              const src = normalizeImageUrl(icon.src, manifestUrl);
-              if (!src) continue;
-              add({ url: src, sizes: icon.sizes, type: icon.type, purpose: icon.purpose });
+              add(
+                { url: icon.src, sizes: icon.sizes, type: icon.type, purpose: icon.purpose },
+                manifestUrl,
+              );
             }
           }
         }
