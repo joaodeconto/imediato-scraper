@@ -1,6 +1,6 @@
 {
   "name": "@odeconto/scraper",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "repository": "https://github.com/joaodeconto/odeconto-scraper",
   "publishConfig": {
     "access": "public",
