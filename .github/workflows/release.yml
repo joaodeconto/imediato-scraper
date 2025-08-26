@@ -40,9 +40,7 @@ jobs:
             npm ci
           else
             npm i
-          fi
-        env:
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          fi         
       - name: Build
         run: npm run build
 
@@ -57,6 +55,8 @@ jobs:
       - name: Publish (provenance)
         if: ${{ github.event_name == 'push' || inputs.mode == 'publish' }}
         run: npm publish
+        env:
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
        
       - name: Dry run
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
