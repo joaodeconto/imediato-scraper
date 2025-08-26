@@ -9,7 +9,7 @@ on:
       mode:
         description: "publish or dry-run"
         required: true
-        default: "publish"
+        default: "dry-run"
         type: choice
         options: ["publish","dry-run"]
 
@@ -34,9 +34,10 @@ jobs:
 
       # Instalação determinística; se não tiver package-lock.json, troque por `npm i`
       - name: Install
-        run: npm i        
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm i
+        env: 
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}                
+
       - name: Verify tag matches package.json version
         if: ${{ github.event_name == 'push' }}
         run: |
@@ -48,6 +49,8 @@ jobs:
       - name: Publish (provenance)
         if: ${{ github.event_name == 'push' || inputs.mode == 'publish' }}
         run: npm publish
+        env: 
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
        
       - name: Dry run
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
