@@ -33,7 +33,7 @@ jobs:
 
       # Instalação determinística; se não tiver package-lock.json, troque por `npm i`
       - name: Install
-        run: npm ci
+        run: npm i
         env: 
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}                
 
