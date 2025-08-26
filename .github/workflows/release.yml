@@ -9,7 +9,7 @@ on:
       mode:
         description: "publish or dry-run"
         required: true
-        default: "dry-run"
+        default: "publish"
         type: choice
         options: ["publish","dry-run"]
 
@@ -28,15 +28,13 @@ jobs:
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org/"
-          always-auth: true
+          # always-auth: true
           # cache: "npm"     # cache do npm --- IGNORE ---
           
 
       # Instalação determinística; se não tiver package-lock.json, troque por `npm i`
       - name: Install
-        run: npm i
-        env: 
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}                
+        run: npm i            
 
       - name: Verify tag matches package.json version
         if: ${{ github.event_name == 'push' }}
@@ -49,8 +47,6 @@ jobs:
       - name: Publish (provenance)
         if: ${{ github.event_name == 'push' || inputs.mode == 'publish' }}
         run: npm publish
-        env: 
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
        
       - name: Dry run
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
