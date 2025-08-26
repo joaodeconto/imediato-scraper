@@ -9,6 +9,17 @@ export interface IconCandidate {
   score?: number;
 }
 
+interface ManifestIcon {
+  src?: string;
+  sizes?: string;
+  type?: string;
+  purpose?: string;
+}
+
+interface WebManifest {
+  icons?: ManifestIcon[];
+}
+
 export function normalizeImageUrl(src: string, baseUrl: string): string | undefined {
   try {
     const url = new URL(src, baseUrl);
@@ -69,7 +80,7 @@ export async function pickIcons(url: string): Promise<IconCandidate[]> {
       try {
         const manRes = await fetch(manifestUrl, { headers: { accept: 'application/manifest+json,application/json' } });
         if (manRes.ok) {
-          const manifest = await manRes.json();
+          const manifest = (await manRes.json()) as WebManifest;
           if (Array.isArray(manifest.icons)) {
             for (const icon of manifest.icons) {
               if (!icon.src) continue;
