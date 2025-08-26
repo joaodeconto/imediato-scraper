@@ -2,6 +2,7 @@ import type { ScrapeResult } from './types';
 
 export * from './types';
 export { scrape } from './core/scrape';
+export { scoreIcon } from './score-icon';
 export { pickIcons } from './iconPicker';
 
 export function pickBestImage(meta: ScrapeResult['meta']) {
