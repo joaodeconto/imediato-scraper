@@ -1,8 +1,13 @@
 import * as cheerio from 'cheerio';
 
 export function extractOg($: cheerio.CheerioAPI) {
-  const pickAll = (prop: string) => $(`meta[property="${prop}"]`).map((_, el) => $(el).attr('content') || '').get().filter(Boolean);
-  const pickOne = (prop: string) => $(`meta[property="${prop}"]`).attr('content') || undefined;
+  const pickAll = (prop: string) =>
+    $(`meta[property="${prop}"]`)
+      .map((_, el) => $(el).attr('content') || '')
+      .get()
+      .filter(Boolean);
+  const pickOne = (prop: string) =>
+    $(`meta[property="${prop}"]`).attr('content') || undefined;
 
   const images = pickAll('og:image');
   return {

@@ -30,4 +30,23 @@ describe('scrape', () => {
       `http://localhost:${port}/new/image.png`
     ]);
   });
+
+  it('includes accept-language header when locale is set', async () => {
+    const server = createServer((req, res) => {
+      if (req.url === '/') {
+        expect(req.headers['accept-language']).toBe('pt-BR');
+        res.setHeader('Content-Type', 'text/html');
+        res.end('<html></html>');
+      } else {
+        res.statusCode = 404;
+        res.end();
+      }
+    });
+
+    await new Promise<void>(resolve => server.listen(0, resolve));
+    const { port } = server.address() as AddressInfo;
+
+    await scrape(`http://localhost:${port}/`, { locale: 'pt-BR' });
+    server.close();
+  });
 });
