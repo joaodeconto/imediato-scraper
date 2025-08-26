@@ -33,7 +33,7 @@ jobs:
 
       # Instalação determinística; se não tiver package-lock.json, troque por `npm i`
       - name: Install
-        run: npm i
+        run: npm ci
         env: 
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}                
 
@@ -48,6 +48,8 @@ jobs:
       - name: Publish (provenance)
         if: ${{ github.event_name == 'push' || inputs.mode == 'publish' }}
         run: npm publish
+        env: 
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
        
       - name: Dry run
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run' }}
